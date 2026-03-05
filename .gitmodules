@@ -1,0 +1,15 @@
+[submodule "dspico-dldi"]
+	path = dspico-dldi
+	url = https://github.com/LNH-team/dspico-dldi
+[submodule "dspico-bootloader"]
+	path = dspico-bootloader
+	url = https://github.com/LNH-team/dspico-bootloader
+[submodule "dspico-firmware"]
+	path = dspico-firmware
+	url = https://github.com/LNH-team/dspico-firmware
+[submodule "pico-launcher"]
+	path = pico-launcher
+	url = https://github.com/LNH-team/pico-launcher
+[submodule "DSRomEncryptor-C"]
+	path = DSRomEncryptor-C
+	url = https://github.com/Cerallin/DSRomEncryptor-C
