@@ -29,6 +29,7 @@ LOADER7		:= $(LOADER_DIR)/picoLoader7.bin
 LOADER9		:= $(LOADER_DIR)/picoLoader9.bin
 APLIST		:= $(LOADER_DIR)/aplist.bin
 SAVELIST	:= $(LOADER_DIR)/savelist.bin
+PATCHLIST	:= $(LOADER_DIR)/patchlist.bin
 LAUNCHER	:= $(LAUNCHER_DIR)/LAUNCHER.nds
 
 # Final output targets
@@ -38,10 +39,11 @@ OUT_LOADER7	:= $(OUTPUT_SD_DIR)/_pico/picoLoader7.bin
 OUT_LOADER9	:= $(OUTPUT_SD_DIR)/_pico/picoLoader9.bin
 OUT_APLIST	:= $(OUTPUT_SD_DIR)/_pico/aplist.bin
 OUT_SAVELIST	:= $(OUTPUT_SD_DIR)/_pico/savelist.bin
+OUT_PATCHLIST	:= $(OUTPUT_SD_DIR)/_pico/patchlist.bin
 
 .PHONY: all clean
 
-all: $(OUT_UF2) $(OUT_PICOBOOT) $(OUT_LOADER7) $(OUT_LOADER9) $(OUT_APLIST) $(OUT_SAVELIST)
+all: $(OUT_UF2) $(OUT_PICOBOOT) $(OUT_LOADER7) $(OUT_LOADER9) $(OUT_APLIST) $(OUT_SAVELIST) $(OUT_PATCHLIST)
 	@echo "[>] Build complete!"
 	@echo "    Firmware: $(OUT_UF2)"
 	@echo "    SD card:  $(OUTPUT_SD_DIR)/"
@@ -109,6 +111,9 @@ $(OUT_APLIST): $(APLIST) | $(OUTPUT_SD_DIR)/_pico
 	cp $< $@
 
 $(OUT_SAVELIST): $(SAVELIST) | $(OUTPUT_SD_DIR)/_pico
+	cp $< $@
+
+$(OUT_PATCHLIST): $(PATCHLIST) | $(OUTPUT_SD_DIR)/_pico
 	cp $< $@
 
 # Directory creation (order-only prerequisites)
