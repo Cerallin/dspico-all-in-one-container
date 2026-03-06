@@ -44,12 +44,21 @@ OUT_APLIST	:= $(OUTPUT_SD_DIR)/_pico/aplist.bin
 OUT_SAVELIST	:= $(OUTPUT_SD_DIR)/_pico/savelist.bin
 OUT_PATCHLIST	:= $(OUTPUT_SD_DIR)/_pico/patchlist.bin
 
-.PHONY: all clean
+.PHONY: all clean firmware sdcard theme
 
-all: $(OUT_UF2) $(OUT_PICOBOOT) $(OUT_LOADER7) $(OUT_LOADER9) $(OUT_APLIST) $(OUT_SAVELIST) $(OUT_PATCHLIST)
+all: firmware sdcard theme
 	@echo "[>] Build complete!"
 	@echo "    Firmware: $(OUT_UF2)"
 	@echo "    SD card:  $(OUTPUT_SD_DIR)/"
+
+firmware: $(OUT_UF2)
+
+sdcard: $(OUT_PICOBOOT) $(OUT_LOADER7) $(OUT_LOADER9) $(OUT_APLIST) $(OUT_SAVELIST) $(OUT_PATCHLIST)
+
+theme:
+	@echo "[>] Building theme..."
+	cp -r $(LAUNCHER_DIR)/_pico/themes $(OUTPUT_SD_DIR)/_pico/
+	@echo "    Theme files copied to $(OUTPUT_SD_DIR)/_pico/"
 
 # ──────────────────────────────────────
 # DSpico DLDI
