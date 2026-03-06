@@ -1,4 +1,7 @@
 .vscode/
 .devcontainer.json
-encryptor-data/
 output/
+*ROM
+*srl
+*rom
+*nds

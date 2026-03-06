@@ -13,3 +13,6 @@
 [submodule "DSRomEncryptor-C"]
 	path = DSRomEncryptor-C
 	url = https://github.com/Cerallin/DSRomEncryptor-C
+[submodule "dspico-wrfuxxed"]
+	path = dspico-wrfuxxed
+	url = https://github.com/LNH-team/dspico-wrfuxxed

@@ -26,6 +26,7 @@ COPY dspico-dldi        /build/dspico-dldi
 COPY dspico-bootloader  /build/dspico-bootloader
 COPY DSRomEncryptor-C   /build/DSRomEncryptor-C
 COPY dspico-firmware    /build/dspico-firmware
+COPY dspico-wrfuxxed    /build/dspico-wrfuxxed
 COPY pico-launcher      /build/pico-launcher
 
 # Download pico-loader resources

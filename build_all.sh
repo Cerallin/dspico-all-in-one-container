@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DATA_DIR="encryptor-data"
+BINARIES_DIR="binaries"
 
 NTR_BLOWFISH="ntrBlowfish.bin"
 NTR_BLOWFISH_SHA1="84e467f2485078e401a17a5f231e3fe6e9686648"
@@ -18,9 +18,12 @@ TWL_BIOS_COMPLETE_SHA1="c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53"
 TWL_DEV_BLOWFISH="twlDevBlowfish.bin"
 TWL_DEV_BLOWFISH_SHA1="cff62f24444f5494001f019d505f9c51d40fc8b3"
 
+WRFU_TESTER_V060="WRFUTester_v0.60_20080821.srl"
+WRFU_TESTER_V060_SHA1="2d65fb7a0c62a4f08954b98c95f42b804fccfd26"
+
 # check if a file exists and matches the expected sha1 checksum
 checksum() {
-	local file="$DATA_DIR/$1"
+	local file="$BINARIES_DIR/$1"
 	local expected_sha1="$2"
 
 	if [ ! -f "$file" ]; then
@@ -42,25 +45,25 @@ check_encryptor_prerequisites() {
 	elif checksum "$NTR_BIOS" "$NTR_BIOS_SHA1"; then
 		echo "Using ntr blowfish from biosnds7.rom"
 	else
-		echo "Error: No ntr blowfish table found. Please provide either ntrBlowfish.bin or biosnds7.rom."
+		echo "Error: No ntr blowfish table found. Please provide either ntrBlowfish.bin or biosnds7.rom in the binaries directory."
 		return 1
 	fi
 
 	# Check twl blowfish with checksum
 	if checksum "$TWL_BLOWFISH" "$TWL_BLOWFISH_SHA1"; then
 		echo "Using twl blowfish from $TWL_BLOWFISH"
-	elif [ -f "$DATA_DIR/$TWL_BIOS" ]; then
+	elif [ -f "$BINARIES_DIR/$TWL_BIOS" ]; then
 		echo "Found $TWL_BIOS, checking if it's complete..."
 		if checksum "$TWL_BIOS" "$TWL_BIOS_COMPLETE_SHA1" 2>/dev/null; then
 			echo "Using twl blowfish from $TWL_BIOS"
 		elif checksum "$TWL_BIOS" "$TWL_BIOS_INCOMPLETE_SHA1" 2>/dev/null; then
             echo "Using incomplete twl blowfish from $TWL_BIOS"
 		else
-			echo "Error: $TWL_BIOS found but checksum does not match either complete or incomplete versions. Please provide a valid $TWL_BIOS."
+			echo "Error: $TWL_BIOS found but checksum does not match either complete or incomplete versions. Please provide a valid $TWL_BIOS in the binaries directory."
 			return 1
 		fi
 	else
-		echo "Error: No twl blowfish table found. Please provide either $TWL_BLOWFISH or $TWL_BIOS."
+		echo "Error: No twl blowfish table found. Please provide either $TWL_BLOWFISH or $TWL_BIOS in the binaries directory."
 		return 1
 	fi
 
@@ -68,19 +71,30 @@ check_encryptor_prerequisites() {
 	# if checksum "$TWL_DEV_BLOWFISH" "$TWL_DEV_BLOWFISH_SHA1"; then
 	# 	echo "Using twl dev blowfish from $TWL_DEV_BLOWFISH"
 	# else
-	# 	echo "Error: No twl dev blowfish table found. Please provide $TWL_DEV_BLOWFISH in the DSRomEncryptor directory."
+	# 	echo "Error: No twl dev blowfish table found. Please provide $TWL_DEV_BLOWFISH in the binaries directory."
 	# 	return 1
 	# fi
 
 }
 
+# Check prerequisites for WRFUxxed
+check_wrfuxxed_prerequisites() {
+	if checksum "$WRFU_TESTER_V060" "$WRFU_TESTER_V060_SHA1"; then
+		echo "Using WRFUTester v0.60 from $WRFU_TESTER_V060"
+	else
+		echo "Error: WRFUTester v0.60 not found or checksum mismatch. Please provide WRFUTester_v0.60_20080821.srl in the binaries directory."
+		return 1
+	fi
+}
+
 check_encryptor_prerequisites || exit 1
+check_wrfuxxed_prerequisites || exit 1
 
 ./init_submodules.sh
 
 docker build -t dspico-all-in-one:latest .
 docker run --rm -it \
-	-v "$(pwd)/$DATA_DIR":/data \
+	-v "$(pwd)/$BINARIES_DIR":/data \
 	-v "$(pwd)/output":/output \
 	dspico-all-in-one:latest \
 	bash

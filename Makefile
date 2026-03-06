@@ -10,10 +10,12 @@ WORKDIR		:= /build
 OUTPUT_DIR	?= /output
 OUTPUT_SD_DIR	?= $(OUTPUT_DIR)/sdcard
 DLDITOOL	?= /opt/wonderful/thirdparty/blocksds/core/tools/dlditool/dlditool
+WRFU_TESTER_V060 ?= /data/WRFUTester_v0.60_20080821.srl
 
 # Source directories (COPY'd by Dockerfile)
 DLDI_DIR	:= $(WORKDIR)/dspico-dldi
 BOOT_DIR	:= $(WORKDIR)/dspico-bootloader
+WRFUXXED_DIR	:= $(WORKDIR)/dspico-wrfuxxed
 ENCRYPTOR_DIR	:= $(WORKDIR)/DSRomEncryptor-C
 FIRMWARE_DIR	:= $(WORKDIR)/dspico-firmware
 LOADER_DIR	:= $(WORKDIR)/pico-loader
@@ -22,6 +24,7 @@ LAUNCHER_DIR	:= $(WORKDIR)/pico-launcher
 # Build artifacts (intermediates)
 DLDI		:= $(DLDI_DIR)/DSpico.dldi
 BOOTLOADER	:= $(BOOT_DIR)/BOOTLOADER.nds
+WRFUXXED	:= $(WRFUXXED_DIR)/uartBufv060.bin
 ENCRYPTOR	:= $(ENCRYPTOR_DIR)/build/DSRomEncryptor
 DEFAULT_NDS	:= $(ENCRYPTOR_DIR)/default.nds
 FIRMWARE_UF2	:= $(FIRMWARE_DIR)/build/DSpico.uf2
@@ -78,11 +81,22 @@ $(DEFAULT_NDS): $(BOOTLOADER).patched $(ENCRYPTOR)
 	cd $(ENCRYPTOR_DIR) && $(ENCRYPTOR) $(BOOTLOADER).patched default.nds
 
 # ──────────────────────────────────────
+# DSpico WRFUxxed
+# ──────────────────────────────────────
+$(WRFUXXED): $(DLDI)
+	@echo "[>] Building DSpico WRFUxxed..."
+	$(MAKE) -C $(WRFUXXED_DIR) -j$(NPROC)
+	$(DLDITOOL) $(DLDI) $(WRFUXXED)
+
+# ──────────────────────────────────────
 # DSpico Firmware
 # ──────────────────────────────────────
-$(FIRMWARE_UF2): $(DEFAULT_NDS)
+$(FIRMWARE_UF2): $(DEFAULT_NDS) $(WRFUXXED)
 	@echo "[>] Building DSpico Firmware..."
 	cp $(DEFAULT_NDS) $(FIRMWARE_DIR)/roms/
+	cp $(WRFU_TESTER_V060) $(FIRMWARE_DIR)/roms/dsimode.nds
+	cp $(WRFUXXED) $(FIRMWARE_DIR)/data/
+	sed -i 's/#DSPICO_ENABLE_WRFUXXED/DSPICO_ENABLE_WRFUXXED/' $(FIRMWARE_DIR)/CMakeLists.txt
 	cd $(FIRMWARE_DIR) && chmod +x compile.sh && ./compile.sh
 
 # ──────────────────────────────────────
