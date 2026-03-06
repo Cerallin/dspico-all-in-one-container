@@ -1,5 +1,8 @@
 ## DSpico all in one container
 
+> [!WARNING]
+> This is a WIP repository, because I haven't entered the loader successfully yet.
+
 This repo is to build all things following the [DSpico guide](https://github.com/LNH-team/dspico/blob/develop/GUIDE.md)
 
 ## Building
